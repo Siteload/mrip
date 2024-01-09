@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Display User IP</title>
+    <title>User IP and Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 400px;
+        }
+    </style>
     <script>
         function getUserIP() {
             // Using a third-party service to get the public IP address
@@ -12,6 +19,19 @@
                 .then(data => {
                     const ipAddress = data.ip;
                     document.getElementById('userIP').innerText = 'Your IP Address: ' + ipAddress;
+
+                    // Create a map with Leaflet
+                    const map = L.map('map').setView([0, 0], 2); // Centered at (0, 0) with zoom level 2
+
+                    // Add a tile layer for the map
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
+
+                    // Add a marker for the user's location
+                    L.marker([0, 0]).addTo(map)
+                        .bindPopup('Your IP Location: ' + ipAddress)
+                        .openPopup();
                 })
                 .catch(error => {
                     console.error('Error fetching IP address:', error);
@@ -22,6 +42,7 @@
     </script>
 </head>
 <body>
-    <h1 id="userIP">Loading pls wait...</h1>
+    <h1 id="userIP">Fetching your IP address...</h1>
+    <div id="map"></div>
 </body>
 </html>
